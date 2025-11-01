@@ -33,13 +33,13 @@ export function DepositInput() {
 				return;
 			}
 			const data = await walletClient.data.writeContract({
-				address: SUPPORTED_TOKENS[chain].tokens["USDC2"]
+				address: SUPPORTED_TOKENS[chain].tokens["USDC"]
 					.address as `0x${string}`,
 				abi: erc20Abi,
 				functionName: "transfer",
 				args: [
 					depositAddress,
-					parseUnits(amount, SUPPORTED_TOKENS[chain].tokens["USDC2"].decimals),
+					parseUnits(amount, SUPPORTED_TOKENS[chain].tokens["USDC"].decimals),
 				],
 				// chain: arbitrumSepolia,
 			});
@@ -50,7 +50,7 @@ export function DepositInput() {
 						toAddress: depositAddress,
 						amount: amount,
 						txnHash: data,
-						tokenSymbol: "USDC2",
+						tokenSymbol: "USDC",
 						network: SUPPORTED_TOKENS[chain].name,
 					},
 					{
