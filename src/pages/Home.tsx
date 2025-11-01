@@ -7,8 +7,8 @@ import WalletSignModal from "../Components/WalletSignModal";
 import useFetchDepositAddress from "../hooks/useFetchDepositAddress";
 import { useDispatch } from "react-redux";
 import { setHdAddress } from "../features/user";
-import LoginSignModal from "../Components/loginSignModal";
 import { GraphOverview } from "../Components/GraphOverview";
+import LoginSignModal from "../Components/LoginSignModal";
 
 export function Home() {
 	const dispatch = useDispatch();
@@ -36,13 +36,13 @@ export function Home() {
 	useEffect(() => {
 		// Check if we're in the middle of disconnecting
 		const isDisconnecting = localStorage.getItem("isDisconnecting");
-		
+
 		if (isConnected && address) {
 			// Clear disconnecting flag when wallet is connected (means it's a normal connection, not a disconnect)
 			if (isDisconnecting === "true") {
 				localStorage.removeItem("isDisconnecting");
 			}
-			
+
 			try {
 				const termlocalCheck = localStorage.getItem(address);
 				if (!termlocalCheck) {
@@ -53,7 +53,7 @@ export function Home() {
 			}
 			const termlocalCheck = localStorage.getItem(address);
 			const isLoggedIn = localStorage.getItem(address + "_LoggedIn"); // Corrected to use userAddress_LoggedIn
-			
+
 			// Only show login modal if:
 			// 1. Wallet is connected
 			// 2. Terms are accepted
