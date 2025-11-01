@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import useGetAccountInfo from "../hooks/useGetAccountInfo";
 import useFetchTradeDetails from "../hooks/useFetchTradeDetails";
 import formatAmount from "../utils/formatAmount";
+import useFetchPnlData from "../hooks/useFetchPnlData";
 
 export function StatCards(props: MotionProps) {
 	const { address, isConnected } = useAppKitAccount();
@@ -16,6 +17,11 @@ export function StatCards(props: MotionProps) {
 		refetch: refetchHlBalance,
 		error: hlBalanceError,
 	} = useGetBalance(address || "");
+	const {
+		data: pnlData,
+		isLoading: isPnlLoading,
+		refetch: refetchPnlData,
+	} = useFetchPnlData(address || "");
 	const { data: tradeData, refetch: refetchTradeDetails } =
 		useFetchTradeDetails(address || "");
 	const {
@@ -30,8 +36,15 @@ export function StatCards(props: MotionProps) {
 			refetchHlBalance();
 			refetchAccountInfo();
 			refetchTradeDetails();
+			refetchPnlData();
 		}
-	}, [loggedIn, refetchHlBalance, refetchAccountInfo, refetchTradeDetails]);
+	}, [
+		loggedIn,
+		refetchHlBalance,
+		refetchAccountInfo,
+		refetchTradeDetails,
+		refetchPnlData,
+	]);
 
 	return (
 		<motion.div
@@ -43,45 +56,114 @@ export function StatCards(props: MotionProps) {
 			<div className="card p-4 rounded-lg">
 				<div className="text-xs text-gray-400">Total Value</div>
 				<div className="mt-2 text-white font-semibold text-xl">
-					$
-					{hlBalance &&
-					hlBalance.data.success &&
-					!hlBalance?.data?.data?.exchange1?.error &&
-					!hlBalance?.data?.data?.exchange2?.error
-						? formatAmount(
+					{isPnlLoading ? (
+						<span className="w-5 h-5 inline-block align-middle">
+							<svg
+								className="animate-spin h-5 w-5 text-gray-400"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+							>
+								<circle
+									className="opacity-25"
+									cx="12"
+									cy="12"
+									r="10"
+									stroke="currentColor"
+									strokeWidth="4"
+								></circle>
+								<path
+									className="opacity-75"
+									fill="currentColor"
+									d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+								></path>
+							</svg>
+						</span>
+					) : (
+						<>
+							$
+							{formatAmount(
 								Number(
-									Number(Number(hlBalance.data.data.exchange1.balance)) +
-										Number(hlBalance.data.data.exchange2.balance)
+									Number(Number(pnlData?.data?.hyperliquid?.account_balance)) +
+										Number(pnlData?.data?.lighter?.account_balance)
 								),
 								2
-						  )
-						: 0}
+							)}
+						</>
+					)}
 				</div>
 				<div className="text-xs text-gray-400 mt-1">Estimated</div>
 			</div>
 			<div className="card p-4 rounded-lg">
 				<div className="text-xs text-gray-400">HyperLiquid Balance</div>
 				<div className="mt-2 text-white font-semibold text-xl">
-					$
-					{hlBalance &&
-					hlBalance?.data?.success &&
-					!hlBalance?.data?.data?.exchange1?.error &&
-					hlBalance?.data?.data?.exchange1
-						? formatAmount(Number(hlBalance.data.data.exchange1.balance), 2)
-						: 0}
+					{isPnlLoading ? (
+						<span className="w-5 h-5 inline-block align-middle">
+							<svg
+								className="animate-spin h-5 w-5 text-gray-400"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+							>
+								<circle
+									className="opacity-25"
+									cx="12"
+									cy="12"
+									r="10"
+									stroke="currentColor"
+									strokeWidth="4"
+								></circle>
+								<path
+									className="opacity-75"
+									fill="currentColor"
+									d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+								></path>
+							</svg>
+						</span>
+					) : (
+						<>
+							$
+							{formatAmount(
+								Number(pnlData?.data?.hyperliquid?.account_balance),
+								2
+							)}
+						</>
+					)}
 				</div>
 				<div className="text-xs text-gray-400 mt-1">Available</div>
 			</div>
 			<div className="card p-4 rounded-lg">
 				<div className="text-xs text-gray-400">Lighter Balance</div>
 				<div className="mt-2 text-white font-semibold text-xl">
-					$
-					{hlBalance &&
-					hlBalance.data.success &&
-					!hlBalance.data.data.exchange2.error &&
-					hlBalance?.data?.data?.exchange2
-						? formatAmount(Number(hlBalance.data.data.exchange2.balance), 2)
-						: 0}
+					{isPnlLoading ? (
+						<span className="w-5 h-5 inline-block align-middle">
+							<svg
+								className="animate-spin h-5 w-5 text-gray-400"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+							>
+								<circle
+									className="opacity-25"
+									cx="12"
+									cy="12"
+									r="10"
+									stroke="currentColor"
+									strokeWidth="4"
+								></circle>
+								<path
+									className="opacity-75"
+									fill="currentColor"
+									d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+								></path>
+							</svg>
+						</span>
+					) : (
+						<>
+							$
+							{formatAmount(Number(pnlData?.data?.lighter?.account_balance), 2)}
+						</>
+					)}
 				</div>
 				<div className="text-xs text-gray-400 mt-1">Available</div>
 			</div>

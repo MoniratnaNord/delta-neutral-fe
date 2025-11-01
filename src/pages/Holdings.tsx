@@ -8,6 +8,7 @@ import { PositionsTable, PositionRow } from "../Components/PositionsTable";
 import { TradesTable, TradeRow } from "../Components/TradesTable";
 import useGetAccountInfo from "../hooks/useGetAccountInfo";
 import useGetPnl from "../hooks/useGetPnl";
+import useFetchPnlData from "../hooks/useFetchPnlData";
 
 export function Holdings() {
 	const userAddress = useSelector((state: any) => state.user.userAddress);
@@ -21,12 +22,18 @@ export function Holdings() {
 
 	const { data: hlBalance, isLoading: isBalanceLoading } =
 		useGetBalance(userAddress);
-	const { data: pnlData, isLoading: isPnlLoading } = useGetPnl(userAddress);
+	const {
+		data: pnlData,
+		isLoading: isPnlLoading,
+		refetch: refetchPnlData,
+	} = useFetchPnlData(address || "");
+	// const { data: pnlData, isLoading: isPnlLoading } = useGetPnl(userAddress);
 	const mock = useMemo(() => {
 		// const isHL = platform === "hyperliquid";
-		const balance =
-			Number(hlBalance?.data?.data?.exchange1?.balance) +
-			Number(hlBalance?.data?.data?.exchange2?.balance);
+		const balance = Number(
+			Number(Number(pnlData?.data?.hyperliquid?.account_balance)) +
+				Number(pnlData?.data?.lighter?.account_balance)
+		);
 		// Default empty positions array
 		let positions: any[] = [];
 		// Create an array with both positions (from hyperliquid and lighter)

@@ -11,6 +11,7 @@ import useWithdrawTxn from "../hooks/useWithdrawTxn";
 import useGetBalance from "../hooks/useGetBalance";
 import useCheckDepositWithdraw from "../hooks/useCheckDepositWithdraw";
 import formatAmount from "../utils/formatAmount";
+import useFetchPnlData from "../hooks/useFetchPnlData";
 
 export function WithdrawInput() {
 	const userAddress = useSelector((state: any) => state.user.userAddress);
@@ -30,6 +31,11 @@ export function WithdrawInput() {
 		isLoading: isBalanceLoading,
 		isSuccess: balanceSuccess,
 	} = useGetBalance(address || "");
+	const {
+		data: pnlData,
+		isLoading: isPnlLoading,
+		refetch: refetchPnlData,
+	} = useFetchPnlData(address || "");
 
 	const handleWithdraw = async () => {
 		if (!amount) return alert("Enter amount");
@@ -134,8 +140,8 @@ export function WithdrawInput() {
 								</div>
 								<div className="text-white font-medium mt-1">
 									{formatAmount(
-										Number(withdrawBalance?.data.data.exchange1.balance) +
-											Number(withdrawBalance?.data.data.exchange2.balance),
+										Number(pnlData?.data.hyperliquid.account_balance) +
+											Number(pnlData?.data.lighter.account_balance),
 										2
 									)}
 								</div>

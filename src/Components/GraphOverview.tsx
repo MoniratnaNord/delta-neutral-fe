@@ -38,7 +38,7 @@ export function GraphOverview() {
 		useFetchFundingGraph(
 			address || "",
 			value,
-			active === "fundingApy" && !!isConnected
+			active === "fundingApy" && !!isConnected && !!address
 		);
 	return (
 		<div className="card rounded-xl p-6 bg-neutral-900 relative">

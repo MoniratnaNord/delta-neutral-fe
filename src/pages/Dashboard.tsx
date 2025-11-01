@@ -13,12 +13,18 @@ import { TradesTable, TradeRow } from "../Components/TradesTable";
 import useFetchDepositAddress from "../hooks/useFetchDepositAddress";
 import { setHdAddress } from "../features/user";
 import formatAmount from "../utils/formatAmount";
+import useFetchPnlData from "../hooks/useFetchPnlData";
 
 export function Dashboard() {
 	const dispatch = useDispatch();
 	const userAddress = useSelector((state: any) => state.user.userAddress);
 	const hdAddress = useSelector((state: any) => state.user.hdAddress);
 	const { address, isConnected } = useAppKitAccount();
+	const {
+		data: pnlData,
+		isLoading: isPnlLoading,
+		refetch: refetchPnlData,
+	} = useFetchPnlData(address || "");
 	const {
 		data: depositAddress,
 		refetch,
@@ -146,15 +152,38 @@ export function Dashboard() {
 				<div className="bg-[#15161b] p-4 rounded w-64 mb-6">
 					<div>Withdrawable balance</div>
 					<div className="text-xl font-bold">
-						{hlBalance && hlBalance.data.success
-							? `$${formatAmount(
-									Number(
-										Number(hlBalance.data.data.exchange1.balance) +
-											Number(hlBalance.data.data.exchange2.balance)
-									),
-									2
-							  )}`
-							: 0}
+						{isPnlLoading ? (
+							<span className="w-5 h-5 inline-block align-middle">
+								<svg
+									className="animate-spin h-5 w-5 text-gray-400"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+								>
+									<circle
+										className="opacity-25"
+										cx="12"
+										cy="12"
+										r="10"
+										stroke="currentColor"
+										strokeWidth="4"
+									></circle>
+									<path
+										className="opacity-75"
+										fill="currentColor"
+										d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+									></path>
+								</svg>
+							</span>
+						) : (
+							`$${formatAmount(
+								Number(
+									Number(pnlData?.data.hyperliquid.account_balance) +
+										Number(pnlData?.data.lighter.account_balance)
+								),
+								2
+							)}`
+						)}
 					</div>
 				</div>
 
