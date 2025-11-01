@@ -18,7 +18,7 @@ import {
 	setHdAddress,
 } from "../features/user";
 import { createPublicClient, formatUnits, getContract, http } from "viem";
-import { arbitrumSepolia, mainnet } from "viem/chains";
+import { arbitrum, arbitrumSepolia, mainnet } from "viem/chains";
 import { erc20Abi } from "../abis/erc20abi";
 import useGetHdAddress from "../hooks/useGetHdAddress";
 
@@ -41,7 +41,7 @@ export function NavBar({ account, onConnect, onDisconnect }) {
 
 		const fetchBalance = async () => {
 			const client = createPublicClient({
-				chain: arbitrumSepolia, // 🔑 you can swap this with polygon, arbitrum, etc. based on chainId
+				chain: arbitrum, // 🔑 you can swap this with polygon, arbitrum, etc. based on chainId
 				transport: http(),
 			});
 

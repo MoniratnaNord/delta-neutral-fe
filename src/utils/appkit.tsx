@@ -30,7 +30,7 @@ const metadata = {
 };
 
 // 3) Choose the EVM networks you need
-const networks: any = [arbitrumSepolia];
+const networks: any = [arbitrum];
 
 // 4) Create Wagmi adapter
 const wagmiAdapter = new WagmiAdapter({

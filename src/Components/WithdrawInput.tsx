@@ -44,7 +44,7 @@ export function WithdrawInput() {
 			{
 				userId: address,
 				amount: amount,
-				tokenSymbol: "USDC2",
+				tokenSymbol: "USDC",
 				network: SUPPORTED_TOKENS[chain].name,
 			},
 			{
@@ -164,7 +164,10 @@ export function WithdrawInput() {
 							isLoading
 						}
 						className={`w-full rounded-md py-3 ${
-							(isConnected && balance < 5) ||
+							(isConnected &&
+								Number(pnlData?.data.hyperliquid.account_balance) +
+									Number(pnlData?.data.lighter.account_balance) <
+									5) ||
 							!withdrawCheck?.data.enable_withdraw
 								? "bg-gray-400 cursor-not-allowed"
 								: "btn-accent"
