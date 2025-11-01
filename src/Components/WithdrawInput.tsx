@@ -38,12 +38,19 @@ export function WithdrawInput() {
 	} = useFetchPnlData(address || "");
 
 	const handleWithdraw = async () => {
-		if (!amount) return alert("Enter amount");
+		if (
+			Number(pnlData?.data.hyperliquid.account_balance) +
+				Number(pnlData?.data.lighter.account_balance) ===
+				0 ||
+			pnlData?.data.hyperliquid.account_balance === undefined
+		) {
+			toast.error("You don't have any balance to withdraw");
+			return;
+		}
 		setIsLoading(true);
 		withdrawRequest(
 			{
 				userId: address,
-				amount: amount,
 				tokenSymbol: "USDC",
 				network: SUPPORTED_TOKENS[chain].name,
 			},
@@ -139,10 +146,14 @@ export function WithdrawInput() {
 									Withdrawable Balance
 								</div>
 								<div className="text-white font-medium mt-1">
-									{formatAmount(
-										Number(pnlData?.data.hyperliquid.account_balance) +
-											Number(pnlData?.data.lighter.account_balance),
-										2
+									{isPnlLoading ? (
+										<span className="animate-spin inline-block w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full align-middle"></span>
+									) : (
+										formatAmount(
+											Number(pnlData?.data.hyperliquid.account_balance) +
+												Number(pnlData?.data.lighter.account_balance),
+											2
+										)
 									)}
 								</div>
 							</div>
@@ -161,14 +172,15 @@ export function WithdrawInput() {
 							Number(pnlData?.data.hyperliquid.account_balance) +
 								Number(pnlData?.data.lighter.account_balance) ===
 								0 ||
-							isLoading
+							isPnlLoading
 						}
 						className={`w-full rounded-md py-3 ${
 							(isConnected &&
 								Number(pnlData?.data.hyperliquid.account_balance) +
 									Number(pnlData?.data.lighter.account_balance) <
 									5) ||
-							!withdrawCheck?.data.enable_withdraw
+							!withdrawCheck?.data.enable_withdraw ||
+							isPnlLoading
 								? "bg-gray-400 cursor-not-allowed"
 								: "btn-accent"
 						}`}
