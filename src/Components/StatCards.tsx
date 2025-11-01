@@ -16,7 +16,8 @@ export function StatCards(props: MotionProps) {
 		refetch: refetchHlBalance,
 		error: hlBalanceError,
 	} = useGetBalance(address || "");
-	const { data: tradeData } = useFetchTradeDetails(address || "");
+	const { data: tradeData, refetch: refetchTradeDetails } =
+		useFetchTradeDetails(address || "");
 	const {
 		data: accountInfo,
 		isLoading: isAccountInfoLoading,
@@ -28,8 +29,9 @@ export function StatCards(props: MotionProps) {
 		if (loggedIn) {
 			refetchHlBalance();
 			refetchAccountInfo();
+			refetchTradeDetails();
 		}
-	}, [loggedIn]);
+	}, [loggedIn, refetchHlBalance, refetchAccountInfo, refetchTradeDetails]);
 
 	return (
 		<motion.div
@@ -42,17 +44,14 @@ export function StatCards(props: MotionProps) {
 				<div className="text-xs text-gray-400">Total Value</div>
 				<div className="mt-2 text-white font-semibold text-xl">
 					$
-					{accountInfo &&
-					accountInfo.data.success &&
-					!accountInfo.data.data.lighter.error &&
-					!accountInfo.data.data.hyperliquid.error
+					{hlBalance &&
+					hlBalance.data.success &&
+					!hlBalance?.data?.data?.exchange1?.error &&
+					!hlBalance?.data?.data?.exchange2?.error
 						? formatAmount(
 								Number(
-									Number(
-										accountInfo.data.data.hyperliquid.data.margin_summary
-											.account_value
-									) +
-										Number(accountInfo.data.data.lighter.data.total_asset_value)
+									Number(Number(hlBalance.data.data.exchange1.balance)) +
+										Number(hlBalance.data.data.exchange2.balance)
 								),
 								2
 						  )

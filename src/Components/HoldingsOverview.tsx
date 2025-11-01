@@ -28,7 +28,7 @@ export function HoldingsOverview({
 			<div className="card p-4 rounded-lg">
 				<div className="text-xs text-gray-400">Market</div>
 				<div className="mt-2 text-white font-semibold text-xl capitalize">
-					{market}
+					{market === undefined ? "-" : market}
 				</div>
 			</div>
 			<div className="card p-4 rounded-lg">

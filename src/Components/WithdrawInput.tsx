@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import useWithdrawTxn from "../hooks/useWithdrawTxn";
 import useGetBalance from "../hooks/useGetBalance";
 import useCheckDepositWithdraw from "../hooks/useCheckDepositWithdraw";
+import formatAmount from "../utils/formatAmount";
 
 export function WithdrawInput() {
 	const userAddress = useSelector((state: any) => state.user.userAddress);
@@ -132,8 +133,11 @@ export function WithdrawInput() {
 									Withdrawable Balance
 								</div>
 								<div className="text-white font-medium mt-1">
-									{Number(withdrawBalance?.data.data.exchange1.balance) +
-										Number(withdrawBalance?.data.data.exchange2.balance)}
+									{formatAmount(
+										Number(withdrawBalance?.data.data.exchange1.balance) +
+											Number(withdrawBalance?.data.data.exchange2.balance),
+										2
+									)}
 								</div>
 							</div>
 						</div>

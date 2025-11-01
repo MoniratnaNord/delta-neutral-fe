@@ -9,11 +9,11 @@ const useFetchTradeDetails = (userId: string) => {
 	const hasSignedAndLoggedIn = useCheckUserSign();
 	const jwtToken = useSelector((state: any) => state.user.jwtToken); // Move useSelector here
 	return useQuery({
-		queryKey: ["fetch-trade-details"],
+		queryKey: ["fetch-trade-details", userId, jwtToken],
 		queryFn: () => getTradeDetails(userId, jwtToken), // Pass jwtToken to getAccountInfo
 		// staleTime: Infinity,
 		refetchOnWindowFocus: false,
-		enabled: hasSignedAndLoggedIn && !!userId,
+		enabled: hasSignedAndLoggedIn && !!userId && !!jwtToken,
 	});
 };
 
