@@ -5,19 +5,23 @@ import useCheckUserSign from "./useCheckUserSign";
 import { useSelector } from "react-redux";
 import { fetchWithAuth } from "../utils/appkit";
 
-const useFetchAPYGraph = (userId: string, days: number, enabled: boolean) => {
+const useFetchFundingGraph = (
+	userId: string,
+	days: number,
+	enabled: boolean
+) => {
 	const hasSignedAndLoggedIn = useCheckUserSign();
 	const jwtToken = useSelector((state: any) => state.user.jwtToken); // Move useSelector here
 	return useQuery({
-		queryKey: ["use-fetch-apy-graph", userId, days],
-		queryFn: () => get_fetch_apy_graph(userId, days, jwtToken), // Pass jwtToken to getDepositAddress
+		queryKey: ["use-fetch-funding-graph", userId, days],
+		queryFn: () => get_fetch_funding_graph(userId, days, jwtToken), // Pass jwtToken to getDepositAddress
 		// staleTime: Infinity,
 		refetchOnWindowFocus: false,
 		enabled: enabled && hasSignedAndLoggedIn && !!userId && !!jwtToken,
 	});
 };
 
-const get_fetch_apy_graph = async (
+const get_fetch_funding_graph = async (
 	userId: string,
 	days: number,
 	jwtToken: string
@@ -26,7 +30,7 @@ const get_fetch_apy_graph = async (
 		const response = await fetchWithAuth(
 			`${
 				import.meta.env.VITE_BACKEND_URL
-			}/user/${userId}/fetch-apy-graph?days=${days}`,
+			}/user/${userId}/fetch-funding-graph?days=${days}`,
 			{
 				method: "GET",
 				headers: {
@@ -45,4 +49,4 @@ const get_fetch_apy_graph = async (
 	}
 };
 
-export default useFetchAPYGraph;
+export default useFetchFundingGraph;

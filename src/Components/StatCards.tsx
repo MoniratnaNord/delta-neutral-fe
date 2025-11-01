@@ -4,6 +4,7 @@ import useGetBalance from "../hooks/useGetBalance";
 import React, { useEffect } from "react";
 import useGetAccountInfo from "../hooks/useGetAccountInfo";
 import useFetchTradeDetails from "../hooks/useFetchTradeDetails";
+import formatAmount from "../utils/formatAmount";
 
 export function StatCards(props: MotionProps) {
 	const { address, isConnected } = useAppKitAccount();
@@ -16,7 +17,6 @@ export function StatCards(props: MotionProps) {
 		error: hlBalanceError,
 	} = useGetBalance(address || "");
 	const { data: tradeData } = useFetchTradeDetails(address || "");
-	console.log("Checking trade data", tradeData);
 	const {
 		data: accountInfo,
 		isLoading: isAccountInfoLoading,
@@ -30,8 +30,7 @@ export function StatCards(props: MotionProps) {
 			refetchAccountInfo();
 		}
 	}, [loggedIn]);
-	console.log("hlBalance", accountInfo, hlBalanceError);
-	// console.log("Checking balance", hlBalance?.data.data.exchange1.balance);
+
 	return (
 		<motion.div
 			initial={{ opacity: 0, y: 6 }}
@@ -47,12 +46,16 @@ export function StatCards(props: MotionProps) {
 					accountInfo.data.success &&
 					!accountInfo.data.data.lighter.error &&
 					!accountInfo.data.data.hyperliquid.error
-						? Number(
+						? formatAmount(
 								Number(
-									accountInfo.data.data.hyperliquid.data.margin_summary
-										.account_value
-								) + Number(accountInfo.data.data.lighter.data.total_asset_value)
-						  ).toFixed(4)
+									Number(
+										accountInfo.data.data.hyperliquid.data.margin_summary
+											.account_value
+									) +
+										Number(accountInfo.data.data.lighter.data.total_asset_value)
+								),
+								2
+						  )
 						: 0}
 				</div>
 				<div className="text-xs text-gray-400 mt-1">Estimated</div>
@@ -65,7 +68,7 @@ export function StatCards(props: MotionProps) {
 					hlBalance?.data?.success &&
 					!hlBalance?.data?.data?.exchange1?.error &&
 					hlBalance?.data?.data?.exchange1
-						? hlBalance.data.data.exchange1.balance
+						? formatAmount(Number(hlBalance.data.data.exchange1.balance), 2)
 						: 0}
 				</div>
 				<div className="text-xs text-gray-400 mt-1">Available</div>
@@ -78,17 +81,23 @@ export function StatCards(props: MotionProps) {
 					hlBalance.data.success &&
 					!hlBalance.data.data.exchange2.error &&
 					hlBalance?.data?.data?.exchange2
-						? hlBalance.data.data.exchange2.balance
+						? formatAmount(Number(hlBalance.data.data.exchange2.balance), 2)
 						: 0}
 				</div>
 				<div className="text-xs text-gray-400 mt-1">Available</div>
 			</div>
 			<div className="card p-4 rounded-lg">
 				<div className="text-xs text-gray-400">Funding Earned</div>
-				<div className="mt-2 text-white font-semibold text-xl">
+				<div
+					className={
+						Number(tradeData?.data?.data.total_funding_earned) < 0
+							? "mt-2 text-red-400 font-semibold text-xl"
+							: "mt-2 text-green-400 font-semibold text-xl"
+					}
+				>
 					$
 					{tradeData && tradeData.data.success && tradeData?.data?.data
-						? Number(tradeData.data.data.total_funding_earned).toFixed(2)
+						? formatAmount(Number(tradeData.data.data.total_funding_earned), 2)
 						: 0}
 				</div>
 			</div>

@@ -9,6 +9,7 @@ import { parseUnits } from "viem";
 import { toast } from "sonner";
 import useWithdrawTxn from "../hooks/useWithdrawTxn";
 import useGetBalance from "../hooks/useGetBalance";
+import useCheckDepositWithdraw from "../hooks/useCheckDepositWithdraw";
 
 export function WithdrawInput() {
 	const userAddress = useSelector((state: any) => state.user.userAddress);
@@ -21,16 +22,16 @@ export function WithdrawInput() {
 	const { address, isConnected } = useAppKitAccount();
 	const [isLoading, setIsLoading] = useState(false);
 	const [asset] = useState("USDC");
+	const { data: withdrawCheck, isLoading: withdrawCheckLoading } =
+		useCheckDepositWithdraw(address || "");
 	const {
 		data: withdrawBalance,
 		isLoading: isBalanceLoading,
 		isSuccess: balanceSuccess,
 	} = useGetBalance(address || "");
-	console.log("checking withdrawable bal", withdrawBalance, balanceSuccess);
 
 	const handleWithdraw = async () => {
 		if (!amount) return alert("Enter amount");
-		console.log("check check", SUPPORTED_TOKENS[chain].tokens["USDC2"].address);
 		setIsLoading(true);
 		withdrawRequest(
 			{
@@ -43,7 +44,6 @@ export function WithdrawInput() {
 				onSuccess: (data: any) => {
 					toast.success("Withdraw Request recorded successfully!");
 					setIsLoading(false);
-					console.log("Deposit transaction recorded:", data);
 				},
 				onError: (error: any) => {
 					toast.error("Withdraw Request failed!");
@@ -58,8 +58,7 @@ export function WithdrawInput() {
 				<div>
 					{/* <h3 className="h-heading text-white text-xl">Withdraw from Asthra</h3> */}
 					<p className="text-sm text-gray-400 mt-1">
-						Withdraw your funds to any external wallet. Minimum withdrawal
-						amount is $500.
+						Request to close all positions and withdraw funds.
 					</p>
 				</div>
 			</div>
@@ -84,12 +83,12 @@ export function WithdrawInput() {
 							</button>
 						))}
 					</div> */}
-					<label className="text-xs text-gray-400">Address</label>
+					{/* <label className="text-xs text-gray-400">Address</label>
 					<input
 						value={userAddress}
 						// onChange={(e) => setAddressInput(e.target.value)}
 						className="w-full rounded-md p-3 bg-transparent border border-neutral-800 text-white"
-					/>
+					/> */}
 				</div>
 
 				{/* <div className="flex flex-col gap-4">
@@ -139,12 +138,20 @@ export function WithdrawInput() {
 							</div>
 						</div>
 					</div>
-
+					<div className="text-red p-2">
+						<p className="text-red-400">
+							{!withdrawCheck?.data.enable_withdraw &&
+								"There is a pending withdraw you can't submit another"}
+						</p>
+					</div>
 					<button
 						onClick={handleWithdraw}
-						disabled={balance < 5 || isLoading}
+						disabled={
+							!withdrawCheck?.data.enable_withdraw || balance < 5 || isLoading
+						}
 						className={`w-full rounded-md py-3 ${
-							isConnected && balance < 5
+							(isConnected && balance < 5) ||
+							!withdrawCheck?.data.enable_withdraw
 								? "bg-gray-400 cursor-not-allowed"
 								: "btn-accent"
 						}`}

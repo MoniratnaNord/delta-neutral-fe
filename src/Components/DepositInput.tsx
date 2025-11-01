@@ -7,6 +7,7 @@ import { SUPPORTED_TOKENS } from "../config/tokens";
 import { erc20Abi } from "../abis/erc20abi";
 import { parseUnits } from "viem";
 import { toast } from "sonner";
+import formatAmount from "../utils/formatAmount";
 
 export function DepositInput() {
 	const walletClient = useWalletClient();
@@ -21,7 +22,7 @@ export function DepositInput() {
 
 	const handleDeposit = async () => {
 		if (!amount) return alert("Enter amount");
-		console.log("check check", SUPPORTED_TOKENS[chain].tokens["USDC2"].address);
+
 		try {
 			setIsLoading(true);
 			if (walletClient.data == undefined) {
@@ -55,7 +56,6 @@ export function DepositInput() {
 					{
 						onSuccess: (data: any) => {
 							toast.success("Deposit transaction recorded successfully!");
-							console.log("Deposit transaction recorded:", data);
 						},
 					}
 				);
@@ -111,7 +111,9 @@ export function DepositInput() {
 						</div>
 						<div>
 							<div className="text-xs text-gray-400">Balance</div>
-							<div className="text-white font-medium mt-1">{balance}</div>
+							<div className="text-white font-medium mt-1">
+								{formatAmount(Number(balance), 2)}
+							</div>
 						</div>
 						{/* <button className="text-sm px-3 py-1 rounded-md bg-neutral-800">
 							Change

@@ -77,8 +77,11 @@ export const fetchWithAuth = async (url: string, options?: RequestInit) => {
 			errorData.message &&
 			errorData.message.includes("Invalid or expired token")
 		) {
-			store.dispatch(logout());
+			// Clear login status but don't set isDisconnecting flag
+			// This way, if wallet is still connected, Home.tsx will show login modal
 			localStorage.removeItem(address + "_LoggedIn");
+			localStorage.removeItem("jwtToken");
+			store.dispatch(logout());
 		} else {
 			throw new Error(errorData.message || "Unauthorized");
 		}

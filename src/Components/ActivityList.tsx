@@ -19,7 +19,6 @@ export function ActivityList() {
 		isLoading: withdrawsLoading,
 		refetch: refetchWithdraws,
 	} = useGetWithdraws(userAddress, 1);
-	console.log("deposit, withdraws", deposits, withdraws);
 	// Merge deposits and withdraws, sort by timestamp, and take last 5
 	// Only update activity when deposits or withdraws change
 	// loop through activity and show the latest 5
@@ -50,7 +49,6 @@ export function ActivityList() {
 		}
 		// setActivity([]);
 	}, [deposits?.data.data, withdraws?.data.data]);
-	console.log("activity", activity);
 	return (
 		<motion.div
 			initial={{ opacity: 0 }}

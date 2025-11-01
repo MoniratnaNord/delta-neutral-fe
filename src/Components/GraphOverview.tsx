@@ -10,8 +10,11 @@ import {
 	ResponsiveContainer,
 	AreaChart,
 	Area,
+	Customized,
 } from "recharts";
 import useFetchAPYGraph from "../hooks/useFetchAPYGraph";
+import useFetchFundingGraph from "../hooks/useFetchFundingGraph";
+import { useAppKitAccount } from "@reown/appkit/react";
 
 const mockData = [
 	{ name: "Jan", valueA: 400, valueB: 240 },
@@ -23,16 +26,26 @@ const mockData = [
 	{ name: "Jul", valueA: 349, valueB: 430 },
 ];
 export function GraphOverview() {
-	const address = "0x85290Ee672292528376adc10ef1Ff6f4Dbb29bDF";
-	const [active, setActive] = useState("bot");
-	const { data: apyGraph } = useFetchAPYGraph(address, 7);
-	console.log("graph", apyGraph?.data);
+	const { address, isConnected } = useAppKitAccount();
+	const [active, setActive] = useState("userApy");
+	const [value, setValue] = useState(7);
+	const { data: apyGraph, isLoading: apyGraphLoading } = useFetchAPYGraph(
+		address || "",
+		value,
+		active === "userApy" && !!isConnected
+	);
+	const { data: fundingGraph, isLoading: fundingGraphLoading } =
+		useFetchFundingGraph(
+			address || "",
+			value,
+			active === "fundingApy" && !!isConnected
+		);
 	return (
-		<div className="card rounded-xl p-6 bg-neutral-900">
+		<div className="card rounded-xl p-6 bg-neutral-900 relative">
 			{/* <h3 className="text-white text-xl mb-4">Overview Graph</h3> */}
-			<div className="flex items-start justify-between p-4">
+			<div className="flex items-start justify-between p-4 relative z-10">
 				<div className="inline-flex items-center space-x-2">
-					<button
+					{/* <button
 						className={`px-3 py-1 text-xs rounded border transition-colors ${
 							active === "bot"
 								? "bg-green-900/30 text-green-400 border-green-800/50"
@@ -41,67 +54,115 @@ export function GraphOverview() {
 						// onClick={() => onChange("hyperliquid")}
 					>
 						Bot APY
-					</button>
+					</button> */}
 					<button
 						className={`px-3 py-1 text-xs rounded border transition-colors ${
-							active === "lighter"
+							active === "userApy"
 								? "bg-green-900/30 text-green-400 border-green-800/50"
 								: "bg-[#15161b] text-gray-300 border-transparent hover:text-green-300"
 						}`}
-						// onClick={() => onChange("lighter")}
+						onClick={() => setActive("userApy")}
 					>
 						User APY
 					</button>
 					<button
 						className={`px-3 py-1 text-xs rounded border transition-colors ${
-							active === "lighter"
+							active === "fundingApy"
 								? "bg-green-900/30 text-green-400 border-green-800/50"
 								: "bg-[#15161b] text-gray-300 border-transparent hover:text-green-300"
 						}`}
-						// onClick={() => onChange("lighter")}
+						onClick={() => setActive("fundingApy")}
 					>
 						Funding Earned
 					</button>
 				</div>
-				<div>
+				<div className="relative z-10">
 					<select
 						className="px-3 py-1 text-xs rounded border transition-colors bg-[#15161b] text-gray-300 border-transparent hover:text-green-300"
-						defaultValue="7d"
-						// onChange={...} // Add a handler if you want to do something when changed
+						value={value}
+						onChange={(e) => setValue(Number(e.target.value))}
 					>
-						<option value="7d">7d</option>
-						<option value="30d">30d</option>
-						<option value="90d">90d</option>
+						<option value="7">7d</option>
+						<option value="30">30d</option>
+						<option value="90">90d</option>
 					</select>
 				</div>
 			</div>
-			<ResponsiveContainer width="100%" height={450}>
-				<AreaChart
-					data={apyGraph?.data}
-					margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
-				>
-					<CartesianGrid stroke="#444" strokeDasharray="3 3" />
-					<XAxis dataKey="timestamp" tick={{ fill: "#aaa" }} />
-					<YAxis tick={{ fill: "#aaa" }} />
-					<Tooltip contentStyle={{ backgroundColor: "#222", border: "none" }} />
-					<Area type="monotone" dataKey="apy" stroke="#8884d8" fill="#8884d8" />
-					<Legend />
-					{/* <Line
-						type="monotone"
-						dataKey="valueA"
-						stroke="#82ca9d"
-						strokeWidth={2}
-						dot={{ r: 3 }}
-					/>
-					<Line
-						type="monotone"
-						dataKey="valueB"
-						stroke="#8884d8"
-						strokeWidth={2}
-						dot={{ r: 3 }}
-					/> */}
-				</AreaChart>
-			</ResponsiveContainer>
+			<div className="relative">
+				<ResponsiveContainer width="100%" height={450}>
+					<AreaChart
+						data={
+							active === "userApy" && apyGraph
+								? apyGraph?.data
+								: fundingGraph?.data
+						}
+						margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
+					>
+						<CartesianGrid stroke="#444" strokeDasharray="3 3" />
+						<XAxis
+							dataKey="timestamp"
+							tick={{ fill: "#aaa" }}
+							tickFormatter={(tick) => {
+								try {
+									const date = new Date(tick);
+									const day = date.getDate().toString().padStart(2, "0");
+									const month = date.toLocaleString("default", {
+										month: "short",
+									});
+									return `${day} ${month}`;
+								} catch {
+									return tick;
+								}
+							}}
+						/>
+						<YAxis tick={{ fill: "#aaa" }} />
+						<Tooltip
+							contentStyle={{ backgroundColor: "#222", border: "none" }}
+							labelFormatter={(label) => {
+								try {
+									const date = new Date(label);
+									const day = date.getDate().toString().padStart(2, "0");
+									const month = date.toLocaleString("default", {
+										month: "short",
+									});
+									return `${day} ${month}`;
+								} catch {
+									return label;
+								}
+							}}
+							formatter={(value, name, props) => {
+								if (typeof value === "number") {
+									return value.toFixed(2);
+								}
+								// Try to parse float if value is stringified number
+								if (typeof value === "string") {
+									const num = parseFloat(value);
+									if (!isNaN(num)) {
+										return num.toFixed(2);
+									}
+								}
+								return value;
+							}}
+						/>
+						<Area
+							type="monotone"
+							dataKey={active === "userApy" ? "apy" : "funding"}
+							stroke="#8884d8"
+							fill="#8884d8"
+						/>
+						<Legend />
+					</AreaChart>
+				</ResponsiveContainer>
+				{/* ✅ Overlay text when no data - positioned only over chart area */}
+				{((active === "fundingApy" &&
+					(!fundingGraph?.data || fundingGraph.data.length === 0)) ||
+					(active === "userApy" &&
+						(!apyGraph?.data || apyGraph.data.length === 0))) && (
+					<div className="absolute inset-0 flex items-center justify-center text-gray-400 text-lg bg-transparent pointer-events-none">
+						Graph points not yet available
+					</div>
+				)}
+			</div>
 		</div>
 	);
 }

@@ -5,28 +5,24 @@ import useCheckUserSign from "./useCheckUserSign";
 import { useSelector } from "react-redux";
 import { fetchWithAuth } from "../utils/appkit";
 
-const useFetchAPYGraph = (userId: string, days: number, enabled: boolean) => {
+const useCheckDepositWithdraw = (userId: string) => {
 	const hasSignedAndLoggedIn = useCheckUserSign();
 	const jwtToken = useSelector((state: any) => state.user.jwtToken); // Move useSelector here
 	return useQuery({
-		queryKey: ["use-fetch-apy-graph", userId, days],
-		queryFn: () => get_fetch_apy_graph(userId, days, jwtToken), // Pass jwtToken to getDepositAddress
+		queryKey: ["check-deposit-withdraw"],
+		queryFn: () => checkDepositWithdraw(userId, jwtToken), // Pass jwtToken to getDepositAddress
 		// staleTime: Infinity,
 		refetchOnWindowFocus: false,
-		enabled: enabled && hasSignedAndLoggedIn && !!userId && !!jwtToken,
+		enabled: hasSignedAndLoggedIn && !!userId && !!jwtToken,
 	});
 };
 
-const get_fetch_apy_graph = async (
-	userId: string,
-	days: number,
-	jwtToken: string
-) => {
+const checkDepositWithdraw = async (userId: string, jwtToken: string) => {
 	try {
 		const response = await fetchWithAuth(
 			`${
 				import.meta.env.VITE_BACKEND_URL
-			}/user/${userId}/fetch-apy-graph?days=${days}`,
+			}/user/${userId}/check-deposit-withdraw`,
 			{
 				method: "GET",
 				headers: {
@@ -45,4 +41,4 @@ const get_fetch_apy_graph = async (
 	}
 };
 
-export default useFetchAPYGraph;
+export default useCheckDepositWithdraw;

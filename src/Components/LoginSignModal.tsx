@@ -11,6 +11,7 @@ import { handleApiError } from "../utils/errorHandling";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAccount, useDisconnect } from "wagmi";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface LoginSignModalProps {
 	isOpen: boolean;
@@ -28,6 +29,7 @@ const LoginSignModal: React.FC<LoginSignModalProps> = ({
 	const { address: userAddress } = useAccount();
 	const { disconnect } = useDisconnect();
 	const { mutate: loginUser } = useLoginUser();
+	const queryClient = useQueryClient();
 
 	const generateNonce = () => {
 		return crypto.randomUUID();
@@ -38,7 +40,6 @@ const LoginSignModal: React.FC<LoginSignModalProps> = ({
 	const nonce = generateNonce();
 	const time = new Date().getTime();
 	const loginMessage = `\nBy signing this message, I confirm that I am the owner of the wallet address ${userAddress?.toLowerCase()} and can access all the apis.\nTimestamp: ${time}\nNonce: ${nonce}\n`;
-	console.log("Checking login", loginMessage);
 	const handleAgreeTerms = async () => {
 		try {
 			if (!userAddress) {
@@ -49,9 +50,7 @@ const LoginSignModal: React.FC<LoginSignModalProps> = ({
 				account: userAddress as `0x${string}`,
 				message: loginMessage,
 			});
-			console.log("sign", signature);
 			if (!signature) {
-				console.log("Signature failed");
 				onClose();
 				return;
 			}
@@ -68,6 +67,8 @@ const LoginSignModal: React.FC<LoginSignModalProps> = ({
 						dispatch(setJwtToken(data.data.data.jwt_token)); // Dispatch action to store JWT
 						localStorage.setItem(userAddress + "_LoggedIn", "true"); // Set login status
 						localStorage.setItem("jwtToken", data.data.data.jwt_token);
+						// Invalidate all queries so Home/Dashboard hooks refetch with new auth
+						queryClient.invalidateQueries();
 						setLoginSuccess(true);
 						onClose();
 					},

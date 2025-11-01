@@ -21,9 +21,7 @@ export default function WalletSignModal({ isOpen, onClose, onSuccessfulSign }) {
 	if (!isOpen) return null;
 	const nonce = generateNonce();
 	const time = new Date().getTime();
-	console.log("userAddress", userAddress.toLowerCase());
 	const termsAndConditions = `\nBy signing this message, I confirm that I am the owner of the wallet address ${userAddress.toLowerCase()} and authorize the execution of a Delta Neutral Strategy on my behalf.\nI understand the risks involved and consent to the execution of this strategy.\nTimestamp: ${time}\nNonce: ${nonce}\n`;
-	console.log("termsAndConditions", termsAndConditions);
 	const handleAgreeTerms = async () => {
 		try {
 			if (!userAddress) {
@@ -35,11 +33,9 @@ export default function WalletSignModal({ isOpen, onClose, onSuccessfulSign }) {
 				account: userAddress as `0x${string}`,
 				message: termsAndConditions,
 			});
-			console.log("signature", signature);
 
 			if (signature == null || signature == undefined) {
 				// toastify("Signature failed!", "autoError");
-				console.log("signature failed");
 				// setIsOpenLoader(false);
 				// setTermAndConditionModal(false);
 				onClose();
@@ -53,7 +49,6 @@ export default function WalletSignModal({ isOpen, onClose, onSuccessfulSign }) {
 				},
 				{
 					onSuccess: (data: any) => {
-						console.log("User created:", data.data.data.address0);
 						dispatch(setHdAddress(data.data.data.address0));
 						localStorage.setItem(userAddress, "ReadTermAndCondition");
 						onSuccessfulSign(); // Call new prop on success

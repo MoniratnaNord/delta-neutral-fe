@@ -36,7 +36,6 @@ export function NavBar({ account, onConnect, onDisconnect }) {
 	const { data: hdAddressData, isLoading: addressLoading } = useGetHdAddress(
 		address || ""
 	);
-	console.log("Checking hd address", hdAddressData);
 	useEffect(() => {
 		if (!isConnected || !walletProvider || !address) return;
 
@@ -63,18 +62,10 @@ export function NavBar({ account, onConnect, onDisconnect }) {
 
 		fetchBalance();
 	}, [isConnected, walletProvider, address, chainId]);
-	console.log(
-		"AppKit network:",
-		caipNetwork?.name,
-		caipNetwork?.chainNamespace,
-		caipNetwork?.assets,
-		chainId,
-		balance
-	);
 	const imageUrl = caipNetwork?.assets?.imageId
 		? `https://explorer-api.walletconnect.com/v3/logo/${caipNetwork.assets.imageId}`
 		: null;
-	console.log(imageUrl);
+
 	useEffect(() => {
 		if (isConnected) {
 			dispatch(setAddress(address));
@@ -173,6 +164,8 @@ export function NavBar({ account, onConnect, onDisconnect }) {
 							</div>
 							<button
 								onClick={() => {
+									// Set a flag to indicate we're disconnecting
+									localStorage.setItem("isDisconnecting", "true");
 									disconnect();
 									localStorage.removeItem(address + "_LoggedIn");
 									localStorage.removeItem("jwtToken");

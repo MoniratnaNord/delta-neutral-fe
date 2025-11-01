@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import formatAmount from "../utils/formatAmount";
 
 export interface PositionRow {
 	id: string;
@@ -6,6 +7,7 @@ export interface PositionRow {
 	size: number;
 	entry_price: number;
 	side: string;
+	platform: string;
 	// markPrice: number;
 	unrealized_pnl: number;
 	liquidation_price?: number;
@@ -17,13 +19,11 @@ export interface PositionRow {
 
 interface PositionsTableProps {
 	rows: PositionRow[];
-	value: any;
 }
 
-export function PositionsTable({ rows, value }: PositionsTableProps) {
+export function PositionsTable({ rows }: PositionsTableProps) {
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 2;
-
 	const currentItems = useMemo(() => {
 		const indexOfLastItem = currentPage * itemsPerPage;
 		const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -40,16 +40,18 @@ export function PositionsTable({ rows, value }: PositionsTableProps) {
 				<table className="min-w-[720px] w-full text-sm">
 					<thead className="bg-[#121318] text-gray-400">
 						<tr>
-							<th className="text-left px-4 py-2 whitespace-nowrap">Symbol</th>
+							<th className="text-left px-4 py-2 whitespace-nowrap">Market</th>
 							<th className="text-right px-4 py-2 whitespace-nowrap">Size</th>
-							<th className="text-right px-4 py-2 whitespace-nowrap">Entry</th>
+							<th className="text-right px-4 py-2 whitespace-nowrap">
+								Platform
+							</th>
 							<th className="text-right px-4 py-2 whitespace-nowrap">Side</th>
 							<th className="text-right px-4 py-2 whitespace-nowrap">
-								Unrealized PnL
+								Position Value
 							</th>
-							<th className="text-right px-4 py-2 whitespace-nowrap">
+							{/* <th className="text-right px-4 py-2 whitespace-nowrap">
 								Liq. Price
-							</th>
+							</th> */}
 						</tr>
 					</thead>
 					<tbody>
@@ -69,32 +71,24 @@ export function PositionsTable({ rows, value }: PositionsTableProps) {
 										{r.size || r.position}
 									</td>
 									<td className="px-4 py-2 text-right whitespace-nowrap">
-										$
-										{r.entry_price === undefined
-											? r.avg_entry_price?.toLocaleString() // Use optional chaining
-											: r.entry_price.toLocaleString()}
+										{r.platform}
 									</td>
+
 									<td className="px-4 py-2 text-right whitespace-nowrap">
-										{value === "lighter"
-											? r.sign === 1
-												? "LONG"
-												: "SHORT"
-											: r.size > 0 || r.position > 0
-											? "LONG"
-											: "SHORT"}
+										{r.sign === 1 ? "LONG" : "SHORT"}
 									</td>
 									<td
 										className={`px-4 py-2 text-right whitespace-nowrap ${
-											r.unrealized_pnl >= 0 ? "text-green-400" : "text-red-400"
+											r.position_value >= 0 ? "text-green-400" : "text-red-400"
 										}`}
 									>
-										${r.unrealized_pnl.toLocaleString()}
+										${formatAmount(r.position_value, 2)}
 									</td>
-									<td className="px-4 py-2 text-right whitespace-nowrap">
+									{/* <td className="px-4 py-2 text-right whitespace-nowrap">
 										{r.liquidation_price
 											? `$${Number(r.liquidation_price).toFixed(5)}`
 											: "-"}
-									</td>
+									</td> */}
 								</tr>
 							))
 						)}

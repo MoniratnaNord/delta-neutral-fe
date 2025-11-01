@@ -34,7 +34,15 @@ export function Home() {
 	}, [isConnected, depositAddress]);
 
 	useEffect(() => {
+		// Check if we're in the middle of disconnecting
+		const isDisconnecting = localStorage.getItem("isDisconnecting");
+		
 		if (isConnected && address) {
+			// Clear disconnecting flag when wallet is connected (means it's a normal connection, not a disconnect)
+			if (isDisconnecting === "true") {
+				localStorage.removeItem("isDisconnecting");
+			}
+			
 			try {
 				const termlocalCheck = localStorage.getItem(address);
 				if (!termlocalCheck) {
@@ -45,10 +53,23 @@ export function Home() {
 			}
 			const termlocalCheck = localStorage.getItem(address);
 			const isLoggedIn = localStorage.getItem(address + "_LoggedIn"); // Corrected to use userAddress_LoggedIn
-			if (!isLoggedIn && termlocalCheck) {
+			
+			// Only show login modal if:
+			// 1. Wallet is connected
+			// 2. Terms are accepted
+			// 3. Not logged in
+			// 4. We're NOT disconnecting (to prevent showing modal after user clicks disconnect)
+			if (!isLoggedIn && termlocalCheck && isDisconnecting !== "true") {
 				setIsLoginModal(true); // Show login modal
 			}
 		} else if (!isConnected) {
+			// If wallet is not connected, close any open modals
+			setIsLoginModal(false);
+			setTermAndConditionModal(false);
+			// Clear the disconnecting flag when wallet is fully disconnected
+			if (isDisconnecting === "true") {
+				localStorage.removeItem("isDisconnecting");
+			}
 		}
 		// localStorage.setItem(address + "_LoggedIn", "true"); // Set login status
 		// localStorage.setItem("jwtToken", "khgjkhgjhjgv");

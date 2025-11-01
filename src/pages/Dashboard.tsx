@@ -1,6 +1,6 @@
 import { useAppKitAccount } from "@reown/appkit/react";
 import React, { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import useGetDeposits from "../hooks/useGetDeposits";
 import { DepositsTable } from "../Components/DepositsTable";
 import useGetWithdraws from "../hooks/useGetWithdraws";
@@ -11,13 +11,25 @@ import { HoldingsOverview } from "../Components/HoldingsOverview";
 import { PositionsTable, PositionRow } from "../Components/PositionsTable";
 import { TradesTable, TradeRow } from "../Components/TradesTable";
 import useFetchDepositAddress from "../hooks/useFetchDepositAddress";
+import { setHdAddress } from "../features/user";
+import formatAmount from "../utils/formatAmount";
 
 export function Dashboard() {
+	const dispatch = useDispatch();
 	const userAddress = useSelector((state: any) => state.user.userAddress);
 	const hdAddress = useSelector((state: any) => state.user.hdAddress);
-
-	console.log({ userAddress });
-	const { isConnected } = useAppKitAccount();
+	const { address, isConnected } = useAppKitAccount();
+	const {
+		data: depositAddress,
+		refetch,
+		isLoading,
+	} = useFetchDepositAddress(address || "");
+	useEffect(() => {
+		if (depositAddress) {
+			console.log("setting address", depositAddress.address);
+			dispatch(setHdAddress(depositAddress.address));
+		}
+	}, [isConnected, depositAddress]);
 	const [activeTab, setActiveTab] = useState<string>("TRANSACTIONS");
 	const [platform, setPlatform] = useState<"hyperliquid" | "lighter">(
 		"hyperliquid"
@@ -135,10 +147,13 @@ export function Dashboard() {
 					<div>Withdrawable balance</div>
 					<div className="text-xl font-bold">
 						{hlBalance && hlBalance.data.success
-							? `$${
-									Number(hlBalance.data.data.exchange1.balance) +
-									Number(hlBalance.data.data.exchange2.balance)
-							  }`
+							? `$${formatAmount(
+									Number(
+										Number(hlBalance.data.data.exchange1.balance) +
+											Number(hlBalance.data.data.exchange2.balance)
+									),
+									2
+							  )}`
 							: 0}
 					</div>
 				</div>
