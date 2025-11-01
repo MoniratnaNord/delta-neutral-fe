@@ -45,12 +45,12 @@ export function Holdings() {
 			positionsAll = [
 				...accountInfo.data.data.hyperliquid.data.positions.map((pos: any) => ({
 					...pos,
-					platform: "hyperliquid",
+					platform: "Hyperliquid",
 					sign: pos.size > 0 || pos.position > 0 ? 1 : -1,
 				})),
 				...accountInfo.data.data.lighter.data.positions.map((pos: any) => ({
 					...pos,
-					platform: "lighter",
+					platform: "Lighter",
 					sign: pos.sign,
 				})),
 			];
@@ -109,7 +109,7 @@ export function Holdings() {
 				}`}
 			>
 				<HoldingsOverview
-					market={mock?.positions[0]?.coin}
+					market={mock?.positions[0]?.coin || mock?.positions[0]?.symbol}
 					balanceUsd={mock?.balance || 0}
 					portfolioValueUsd={mock?.balance || 0}
 					pnlRealizedUsd={mock.pnlRealizedUsd}

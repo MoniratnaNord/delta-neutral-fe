@@ -209,7 +209,7 @@ export function Dashboard() {
 					<div className="flex space-x-3 mb-4">
 						{[
 							{ key: "DEPOSITS", label: "Deposits" },
-							{ key: "WITHDRAWS", label: "Withdraws" },
+							{ key: "WITHDRAWS", label: "Withdrawals" },
 						].map((t) => (
 							<button
 								key={t.key}

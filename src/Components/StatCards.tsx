@@ -88,7 +88,7 @@ export function StatCards(props: MotionProps) {
 										Number(pnlData?.data?.lighter?.account_balance)
 								),
 								2
-							)}
+							) || 0}
 						</>
 					)}
 				</div>
@@ -126,7 +126,7 @@ export function StatCards(props: MotionProps) {
 							{formatAmount(
 								Number(pnlData?.data?.hyperliquid?.account_balance),
 								2
-							)}
+							) || 0}
 						</>
 					)}
 				</div>
@@ -161,7 +161,10 @@ export function StatCards(props: MotionProps) {
 					) : (
 						<>
 							$
-							{formatAmount(Number(pnlData?.data?.lighter?.account_balance), 2)}
+							{formatAmount(
+								Number(pnlData?.data?.lighter?.account_balance),
+								2
+							) || 0}
 						</>
 					)}
 				</div>

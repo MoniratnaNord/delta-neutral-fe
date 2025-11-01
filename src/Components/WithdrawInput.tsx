@@ -157,7 +157,11 @@ export function WithdrawInput() {
 					<button
 						onClick={handleWithdraw}
 						disabled={
-							!withdrawCheck?.data.enable_withdraw || balance < 5 || isLoading
+							!withdrawCheck?.data.enable_withdraw ||
+							Number(pnlData?.data.hyperliquid.account_balance) +
+								Number(pnlData?.data.lighter.account_balance) ===
+								0 ||
+							isLoading
 						}
 						className={`w-full rounded-md py-3 ${
 							(isConnected && balance < 5) ||
@@ -168,11 +172,6 @@ export function WithdrawInput() {
 					>
 						{isLoading ? "Withdrawing..." : "Place Withdraw"}
 					</button>
-					<p className="text-sm text-red-400 mt-2 text-center">
-						{isConnected && balance < 5
-							? "Wallet doesn't have enough " + asset
-							: null}
-					</p>
 				</div>
 			</div>
 		</>

@@ -22,7 +22,6 @@ export function HoldingsOverview({
 	const { data: tradeData, isLoading: tradeloading } = useFetchTradeDetails(
 		address || ""
 	);
-	console.log("checking trade data", tradeData);
 	return (
 		<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 			<div className="card p-4 rounded-lg">
