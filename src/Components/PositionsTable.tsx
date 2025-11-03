@@ -66,6 +66,56 @@ export function PositionsTable({ rows }: PositionsTableProps) {
 								<tr key={r.id} className="border-t border-white/5">
 									<td className="px-4 py-2 text-white whitespace-nowrap">
 										{r.coin || r.symbol}
+										<>
+											{(r.platform === "Hyperliquid" ||
+												r.platform === "Lighter") && (
+												<a
+													href={
+														r.platform === "Hyperliquid"
+															? `https://app.hyperliquid.xyz/trade/${
+																	r.coin || r.symbol
+															  }`
+															: `https://app.lighter.xyz/trade/${
+																	r.coin || r.symbol
+															  }`
+													}
+													target="_blank"
+													rel="noopener noreferrer"
+													className="inline-flex items-center ml-2 text-green-400 hover:text-green-300"
+													style={{ verticalAlign: "middle" }}
+													title={`Open on ${r.platform}`}
+												>
+													<svg
+														width="13"
+														height="13"
+														viewBox="0 0 20 20"
+														fill="none"
+													>
+														<path
+															d="M14 3H17V6"
+															stroke="currentColor"
+															strokeWidth="1.5"
+															strokeLinecap="round"
+															strokeLinejoin="round"
+														/>
+														<path
+															d="M13.75 6.25L7.5 12.5"
+															stroke="currentColor"
+															strokeWidth="1.5"
+															strokeLinecap="round"
+															strokeLinejoin="round"
+														/>
+														<path
+															d="M17 3L10 10"
+															stroke="currentColor"
+															strokeWidth="1.5"
+															strokeLinecap="round"
+															strokeLinejoin="round"
+														/>
+													</svg>
+												</a>
+											)}
+										</>
 									</td>
 									<td className="px-4 py-2 text-right whitespace-nowrap">
 										{r.size || r.position}

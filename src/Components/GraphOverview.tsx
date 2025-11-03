@@ -195,9 +195,9 @@ export function GraphOverview() {
 	const jwtToken = useSelector((state: any) => state.user.jwtToken);
 	const [active, setActive] = useState<"userApy" | "fundingApy">("userApy");
 	const [value, setValue] = useState(7);
-	const [graphType, setGraphType] = useState<
-		"normal" | "line" | "candlestick" | "bar"
-	>("line");
+	// const [graphType, setGraphType] = useState<
+	// 	"normal" | "line" | "candlestick" | "bar"
+	// >("line");
 	const chartContainerRef = useRef<HTMLDivElement>(null);
 	const chartRef = useRef<IChartApi | null>(null);
 
@@ -263,101 +263,57 @@ export function GraphOverview() {
 
 		chartRef.current = chart;
 
-		// Build series based on selected graph type
-		if (graphType === "normal") {
-			const area = chart.addAreaSeries({
-				lineColor: "#26a69a",
-				topColor: "rgba(38,166,154,0.4)",
-				bottomColor: "rgba(38,166,154,0.0)",
-				priceFormat: {
-					type: "custom",
-					formatter: (price: number) =>
-						active === "userApy"
-							? `${(price ?? 0).toFixed(2)}%`
-							: `$${(price ?? 0).toFixed(2)}`,
-				},
-			});
-			const areaData = data.map((d: any) => ({
+		const candles = chart.addCandlestickSeries({
+			upColor: "#26a69a",
+			downColor: "#ef5350",
+			wickUpColor: "#26a69a",
+			wickDownColor: "#ef5350",
+			borderVisible: false,
+			priceFormat: {
+				type: "custom",
+				formatter: (price: number) =>
+					active === "userApy"
+						? `${(price ?? 0).toFixed(2)}%`
+						: `$${(price ?? 0).toFixed(2)}`,
+			},
+		});
+		// Build synthetic OHLC from single value series
+		const ohlc = data.map((d: any, idx: number, arr: any[]) => {
+			const val =
+				active === "userApy" ? Number(d.apy ?? 0) : Number(d.funding ?? 0);
+			const prev =
+				idx > 0
+					? active === "userApy"
+						? Number(arr[idx - 1].apy ?? 0)
+						: Number(arr[idx - 1].funding ?? 0)
+					: val;
+			const open = prev;
+			const close = val;
+			const variation = Math.abs(val) * 0.005 || 0.01;
+			const high = Math.max(open, close) + variation;
+			const low = Math.min(open, close) - variation;
+			return {
 				time: new Date(d.timestamp).toISOString().split("T")[0],
-				value:
-					active === "userApy" ? Number(d.apy ?? 0) : Number(d.funding ?? 0),
-			}));
-			area.setData(areaData);
-		} else if (graphType === "line") {
-			const lineSeries = chart.addLineSeries({
-				color: "#26a69a",
-				lineWidth: 2,
-				priceFormat: {
-					type: "custom",
-					formatter: (price: number) =>
-						active === "userApy"
-							? `${(price ?? 0).toFixed(2)}%`
-							: `$${(price ?? 0).toFixed(2)}`,
-				},
-			});
-			const lineData = data.map((d: any) => ({
-				time: new Date(d.timestamp).toISOString().split("T")[0],
-				value:
-					active === "userApy" ? Number(d.apy ?? 0) : Number(d.funding ?? 0),
-			}));
-			lineSeries.setData(lineData);
-		} else if (graphType === "bar") {
-			const histogram = chart.addHistogramSeries({
-				color: "#26a69a",
-				priceFormat: {
-					type: "custom",
-					formatter: (price: number) =>
-						active === "userApy"
-							? `${(price ?? 0).toFixed(2)}%`
-							: `$${(price ?? 0).toFixed(2)}`,
-				},
-			});
-			const histData = data.map((d: any) => ({
-				time: new Date(d.timestamp).toISOString().split("T")[0],
-				value:
-					active === "userApy" ? Number(d.apy ?? 0) : Number(d.funding ?? 0),
-				color: Number(d.apy ?? d.funding ?? 0) >= 0 ? "#26a69a" : "#ef5350",
-			}));
-			histogram.setData(histData);
-		} else if (graphType === "candlestick") {
-			const candles = chart.addCandlestickSeries({
-				upColor: "#26a69a",
-				downColor: "#ef5350",
-				wickUpColor: "#26a69a",
-				wickDownColor: "#ef5350",
-				borderVisible: false,
-				priceFormat: {
-					type: "custom",
-					formatter: (price: number) =>
-						active === "userApy"
-							? `${(price ?? 0).toFixed(2)}%`
-							: `$${(price ?? 0).toFixed(2)}`,
-				},
-			});
-			// Build synthetic OHLC from single value series
-			const ohlc = data.map((d: any, idx: number, arr: any[]) => {
-				const val =
-					active === "userApy" ? Number(d.apy ?? 0) : Number(d.funding ?? 0);
-				const prev =
-					idx > 0
-						? active === "userApy"
-							? Number(arr[idx - 1].apy ?? 0)
-							: Number(arr[idx - 1].funding ?? 0)
-						: val;
-				const open = prev;
-				const close = val;
-				const variation = Math.abs(val) * 0.005 || 0.01;
-				const high = Math.max(open, close) + variation;
-				const low = Math.min(open, close) - variation;
-				return {
-					time: new Date(d.timestamp).toISOString().split("T")[0],
-					open,
-					high,
-					low,
-					close,
-				};
-			});
-			candles.setData(ohlc);
+				open,
+				high,
+				low,
+				close,
+			};
+		});
+		candles.setData(ohlc);
+		if (ohlc.length > 0) {
+			const timeScale = chart.timeScale();
+
+			if (ohlc.length <= 10) {
+				timeScale.setVisibleRange({
+					from: ohlc[0].time,
+					to: ohlc[ohlc.length - 1].time,
+				});
+				chart.applyOptions({ timeScale: { barSpacing: 30 } });
+			} else {
+				timeScale.fitContent();
+				chart.applyOptions({ timeScale: { barSpacing: 8 } });
+			}
 		}
 
 		// 🔁 Resize handler
@@ -375,7 +331,7 @@ export function GraphOverview() {
 				chartRef.current = null;
 			}
 		};
-	}, [active, apyGraph, fundingGraph, graphType]);
+	}, [active, apyGraph, fundingGraph]);
 
 	const isEmpty =
 		(active === "userApy" && (!apyGraph?.data || apyGraph.data.length === 0)) ||
@@ -409,7 +365,7 @@ export function GraphOverview() {
 					</button>
 				</div>
 				<div className="relative z-10">
-					<div className="inline-flex items-center space-x-2 mr-3">
+					{/* <div className="inline-flex items-center space-x-2 mr-3">
 						<button
 							className={`px-3 py-1 text-xs rounded border transition-colors ${
 								graphType === "normal"
@@ -450,7 +406,7 @@ export function GraphOverview() {
 						>
 							Candles
 						</button>
-					</div>
+					</div> */}
 					<select
 						className="px-3 py-1 text-xs rounded border transition-colors bg-[#15161b] text-gray-300 border-transparent hover:text-green-300"
 						value={value}
