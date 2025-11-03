@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
 	LineChart,
 	Line,
@@ -15,6 +15,7 @@ import {
 import useFetchAPYGraph from "../hooks/useFetchAPYGraph";
 import useFetchFundingGraph from "../hooks/useFetchFundingGraph";
 import { useAppKitAccount } from "@reown/appkit/react";
+import { useSelector } from "react-redux";
 
 const mockData = [
 	{ name: "Jan", valueA: 400, valueB: 240 },
@@ -27,19 +28,43 @@ const mockData = [
 ];
 export function GraphOverview() {
 	const { address, isConnected } = useAppKitAccount();
+	const jwtToken = useSelector((state: any) => state.user.jwtToken);
 	const [active, setActive] = useState("userApy");
 	const [value, setValue] = useState(7);
-	const { data: apyGraph, isLoading: apyGraphLoading } = useFetchAPYGraph(
+	const {
+		data: apyGraph,
+		isLoading: apyGraphLoading,
+		refetch: refetchApyGraph,
+	} = useFetchAPYGraph(
 		address || "",
 		value,
 		active === "userApy" && !!isConnected
 	);
-	const { data: fundingGraph, isLoading: fundingGraphLoading } =
-		useFetchFundingGraph(
-			address || "",
-			value,
-			active === "fundingApy" && !!isConnected && !!address
-		);
+	const {
+		data: fundingGraph,
+		isLoading: fundingGraphLoading,
+		refetch: refetchFundingGraph,
+	} = useFetchFundingGraph(
+		address || "",
+		value,
+		active === "fundingApy" && !!isConnected && !!address
+	);
+
+	// Refetch graph data when user logs in or jwtToken becomes available
+	useEffect(() => {
+		if (isConnected && address && jwtToken) {
+			const loggedIn = localStorage.getItem(address + "_LoggedIn");
+			if (loggedIn === "true") {
+				// Refetch based on active tab
+				if (active === "userApy") {
+					refetchApyGraph();
+				} else if (active === "fundingApy") {
+					refetchFundingGraph();
+				}
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [jwtToken, active, isConnected, address]);
 	return (
 		<div className="card rounded-xl p-6 bg-neutral-900 relative">
 			{/* <h3 className="text-white text-xl mb-4">Overview Graph</h3> */}

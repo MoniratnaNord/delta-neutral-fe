@@ -13,7 +13,7 @@ const useFetchFundingGraph = (
 	const hasSignedAndLoggedIn = useCheckUserSign();
 	const jwtToken = useSelector((state: any) => state.user.jwtToken); // Move useSelector here
 	return useQuery({
-		queryKey: ["use-fetch-funding-graph", userId, days],
+		queryKey: ["use-fetch-funding-graph", userId, days, jwtToken],
 		queryFn: () => get_fetch_funding_graph(userId, days, jwtToken), // Pass jwtToken to getDepositAddress
 		// staleTime: Infinity,
 		refetchOnWindowFocus: false,
