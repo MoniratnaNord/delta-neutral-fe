@@ -31,7 +31,7 @@ export function DepositsTable({ data }: { data: any[] }) {
 					{rows.map((tx, i) => (
 						<tr key={i} className="border-b border-gray-700 hover:bg-[#0D2F26]">
 							<td className="px-4 py-2 text-blue-400">
-								{truncateMiddle(tx.tx_hash)}
+								{truncateMiddle(tx.tx_hash) || "-"}
 							</td>
 							<td className="px-4 py-2">
 								{tx.withdrawal_address ? "Withdraw" : "Deposit"}
@@ -54,7 +54,7 @@ export function DepositsTable({ data }: { data: any[] }) {
 									tx.amount < 0 ? "text-red-400" : "text-green-400"
 								}`}
 							>
-								{tx.amount}
+								{tx.amount || "-"}
 							</td>
 							<td className="px-4 py-2">{tx.asset}</td>
 							<td className="px-4 py-2">{tx.status}</td>

@@ -160,9 +160,20 @@ export function WithdrawInput() {
 						</div>
 					</div>
 					<div className="text-red p-2">
-						<p className="text-red-400">
-							{!withdrawCheck?.data.enable_withdraw &&
-								"There is a pending withdraw you can't submit another"}
+						<p className="text-red-400 text-sm">
+							{!withdrawCheck?.data.enable_withdraw && (
+								<span className="text-sm">
+									There is a pending withdraw. You can't submit another.
+									<br /> View your transactions to see the status.
+									<br />
+									<a
+										href="/transactions?tab=withdraw"
+										className="underline text-accent-400 hover:text-accent-300"
+									>
+										Go to Withdrawals
+									</a>
+								</span>
+							)}
 						</p>
 					</div>
 					<button

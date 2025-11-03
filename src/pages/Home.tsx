@@ -89,11 +89,11 @@ export function Home() {
 	return (
 		<main className="max-w-7xl mx-auto px-6 py-8">
 			<StatCards />
-			<div className="grid grid-cols-2">
-				<div>
+			<div className="flex">
+				<div className="flex-1">
 					<GraphOverview />
 				</div>
-				<div>
+				<div className="flex-none">
 					<DepositPanel />
 				</div>
 			</div>

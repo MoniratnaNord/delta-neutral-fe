@@ -6,6 +6,7 @@ import { Home } from "./pages/Home";
 import { Dashboard } from "./pages/Dashboard";
 import Holdings from "./pages/Holdings";
 import Strategy from "./pages/Strategy";
+import Layout from "./Components/Layout";
 
 function Referrals() {
 	return (
@@ -56,7 +57,7 @@ export default function App() {
 
 	return (
 		<Router>
-			<div className="min-h-screen">
+			{/* <div className="min-h-screen">
 				<NavBar
 					account={account}
 					onConnect={connect}
@@ -69,11 +70,20 @@ export default function App() {
 					<Route path="/stats" element={<Stats />} />
 					<Route path="/transactions" element={<Dashboard />} />
 					<Route path="/holdings" element={<Holdings />} />
-					{/* <Route path="/strategy" element={<Strategy />} /> */}
 				</Routes>
 
 				<Footer />
-			</div>
+			</div> */}
+			<Layout account={account} onConnect={connect} onDisconnect={disconnect}>
+				<Routes>
+					<Route path="/" element={<Home />} />
+					<Route path="/referrals" element={<Referrals />} />
+					<Route path="/stats" element={<Stats />} />
+					<Route path="/transactions" element={<Dashboard />} />
+					<Route path="/holdings" element={<Holdings />} />
+					{/* <Route path="/strategy" element={<Strategy />} /> */}
+				</Routes>
+			</Layout>
 		</Router>
 	);
 }

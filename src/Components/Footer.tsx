@@ -1,7 +1,7 @@
 export function Footer() {
 	return (
-		<footer className="mt-12 border-t-2 border-transparent/8 pt-8 pb-8 text-sm text-gray-400">
-			<div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-between gap-6">
+		<footer className="border-t-2 border-transparent/8 pt-8 pb-8 text-sm text-gray-400 w-full">
+			<div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between gap-6">
 				<div>
 					<div className="h-heading text-white text-lg">Asthra</div>
 					{/* <div className="text-xs text-gray-400 mt-2">

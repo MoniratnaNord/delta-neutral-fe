@@ -86,7 +86,12 @@ export function DepositInput() {
 					<input
 						value={amount}
 						onChange={(e) => setAmount(e.target.value)}
-						className="mt-2 w-full rounded-md p-3 bg-transparent border border-neutral-800 text-white"
+						className={`mt-2 w-full rounded-md p-3 bg-transparent border border-neutral-800 text-white ${
+							Number(balance) === 0
+								? "opacity-50 cursor-not-allowed"
+								: "hover:border-green-400"
+						}`}
+						disabled={Number(balance) === 0}
 					/>
 					<div className="flex gap-2 mt-3">
 						{[10, 25, 50, 100].map((n) => (

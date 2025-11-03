@@ -3,6 +3,7 @@ export type AmountSuffix = "" | "k" | "M" | "B";
 /**
  * Converts a numeric amount into a human-readable string with k/M/B suffixes.
  * Examples: 950 -> "950", 1200 -> "1.2k", 1500000 -> "1.5M", 2200000000 -> "2.2B".
+ * If there are 4 or 5 digits after the decimal point, will show only 2 decimal digits.
  */
 export function formatAmount(
 	amount: number | null | undefined,
@@ -31,6 +32,16 @@ export function formatAmount(
 	} else if (absolute >= 1_000) {
 		value = absolute / 1_000;
 		suffix = "k";
+	}
+
+	let valueStr = value.toString();
+	if (valueStr.includes(".")) {
+		const [integer, fractional] = valueStr.split(".");
+		if (fractional.length === 4 || fractional.length === 5) {
+			// Reduce to 2 decimal places if 4 or 5 digits after decimal point
+			const formatted = trimTrailingZeros(Number(value).toFixed(2));
+			return `${isNegative ? "-" : ""}${formatted}${suffix}`;
+		}
 	}
 
 	const formatted = trimTrailingZeros(value.toFixed(decimals));

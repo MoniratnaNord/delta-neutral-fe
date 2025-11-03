@@ -16,6 +16,19 @@ import formatAmount from "../utils/formatAmount";
 import useFetchPnlData from "../hooks/useFetchPnlData";
 
 export function Dashboard() {
+	const getQueryParams = () => {
+		if (typeof window === "undefined") return {};
+		return Object.fromEntries(new URLSearchParams(window.location.search));
+	};
+
+	useEffect(() => {
+		const params = getQueryParams();
+		if (params.tab && params.tab.toLowerCase() === "withdraw") {
+			setActiveTab("TRANSACTIONS");
+			setTransactionsSubTab("WITHDRAWS");
+		}
+		// eslint-disable-next-line
+	}, []);
 	const dispatch = useDispatch();
 	const userAddress = useSelector((state: any) => state.user.userAddress);
 	const hdAddress = useSelector((state: any) => state.user.hdAddress);
