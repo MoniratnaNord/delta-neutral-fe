@@ -86,31 +86,38 @@ export function PositionsTable({ rows }: PositionsTableProps) {
 													title={`Open on ${r.platform}`}
 												>
 													<svg
-														width="13"
-														height="13"
-														viewBox="0 0 20 20"
+														width="20"
+														height="20"
+														viewBox="0 0 24 24"
 														fill="none"
+														xmlns="http://www.w3.org/2000/svg"
+														style={{
+															verticalAlign: "middle",
+															filter:
+																"drop-shadow(0 0 4px rgba(52, 211, 153, 0.8))",
+														}}
 													>
+														<circle
+															cx="12"
+															cy="12"
+															r="10"
+															fill="rgba(34,197,94,0.15)"
+														/>
 														<path
-															d="M14 3H17V6"
-															stroke="currentColor"
-															strokeWidth="1.5"
+															d="M8 13.5L12 9.5L16 13.5"
+															stroke="#34D399"
+															strokeWidth="2.2"
 															strokeLinecap="round"
 															strokeLinejoin="round"
 														/>
-														<path
-															d="M13.75 6.25L7.5 12.5"
-															stroke="currentColor"
-															strokeWidth="1.5"
+														<line
+															x1="12"
+															y1="9.5"
+															x2="12"
+															y2="16"
+															stroke="#34D399"
+															strokeWidth="2.2"
 															strokeLinecap="round"
-															strokeLinejoin="round"
-														/>
-														<path
-															d="M17 3L10 10"
-															stroke="currentColor"
-															strokeWidth="1.5"
-															strokeLinecap="round"
-															strokeLinejoin="round"
 														/>
 													</svg>
 												</a>

@@ -278,7 +278,7 @@ export function GraphOverview() {
 			},
 		});
 		// Build synthetic OHLC from single value series
-		const ohlc = data.map((d: any, idx: number, arr: any[]) => {
+		const ohlc = data.map((d, idx, arr) => {
 			const val =
 				active === "userApy" ? Number(d.apy ?? 0) : Number(d.funding ?? 0);
 			const prev =
@@ -286,12 +286,14 @@ export function GraphOverview() {
 					? active === "userApy"
 						? Number(arr[idx - 1].apy ?? 0)
 						: Number(arr[idx - 1].funding ?? 0)
-					: val;
+					: 0; // 👈 Start from 0 for the first candle
+
 			const open = prev;
 			const close = val;
 			const variation = Math.abs(val) * 0.005 || 0.01;
 			const high = Math.max(open, close) + variation;
 			const low = Math.min(open, close) - variation;
+
 			return {
 				time: new Date(d.timestamp).toISOString().split("T")[0],
 				open,
@@ -300,6 +302,7 @@ export function GraphOverview() {
 				close,
 			};
 		});
+
 		candles.setData(ohlc);
 		if (ohlc.length > 0) {
 			const timeScale = chart.timeScale();
