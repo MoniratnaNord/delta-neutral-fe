@@ -78,15 +78,54 @@ export function NavBar({ account, onConnect, onDisconnect }) {
 		<header className="max-w-full border-b border-transparent/10">
 			<div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 				<div className="flex items-center gap-4">
-					<div className="p-2 rounded-md bg-gradient-to-tr from-accent-500 to-accent-400 shadow-lg">
+					{/* <div className="p-2 rounded-md bg-gradient-to-tr from-accent-500 to-accent-400 shadow-lg">
 						<div className="w-8 h-8 rounded flex items-center justify-center text-black font-bold">
 							N
 						</div>
 					</div>
 					<div className="flex flex-col">
 						<div className="h-heading text-white text-lg">Asthra</div>
-						{/* <div className="text-xs text-gray-400">A fresh yield dashboard</div> */}
-					</div>
+						
+					</div> */}
+					<svg
+						width="160"
+						height="40"
+						viewBox="0 0 320 80"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<g transform="translate(0,5)">
+							<path
+								d="M40 5 L70 65 L55 65 L48 50 H32 L25 65 H10 L40 5 Z"
+								fill="#FFC300"
+							/>
+
+							<path d="M40 22 L47 38 H33 L40 22 Z" fill="#0E172A" />
+
+							<ellipse
+								cx="40"
+								cy="40"
+								rx="38"
+								ry="14"
+								transform="rotate(-20 40 40)"
+								stroke="#FFC300"
+								strokeWidth="6"
+								fill="none"
+							/>
+						</g>
+
+						<text
+							x="95"
+							y="55"
+							fontSize="42"
+							fontWeight="600"
+							letterSpacing="1"
+							fill="#FFC300"
+							fontFamily="Inter, system-ui, -apple-system, sans-serif"
+						>
+							asthra
+						</text>
+					</svg>
 				</div>
 
 				<nav className="hidden md:flex items-center gap-4 text-sm">
@@ -152,7 +191,7 @@ export function NavBar({ account, onConnect, onDisconnect }) {
 						<button
 							// onClick={onConnect}
 							onClick={() => open({ view: "Connect", namespace: "eip155" })}
-							className="px-4 py-2 rounded-md btn-accent shadow-sm"
+							className="px-4 py-2 rounded-md bg-[#ffc300] text-black shadow-sm"
 						>
 							{/* <appkit-button /> */}
 							Connect Wallet
@@ -172,7 +211,7 @@ export function NavBar({ account, onConnect, onDisconnect }) {
 									dispatch(clearUserData());
 									window.location.href = "/";
 								}}
-								className="px-3 py-1 rounded-md bg-neutral-800 text-white text-sm"
+								className="px-3 py-1 rounded-md bg-[#ffc300] text-black text-sm"
 							>
 								Disconnect
 							</button>

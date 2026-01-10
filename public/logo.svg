@@ -1,0 +1,30 @@
+<svg
+	width="80"
+	height="80"
+	viewBox="0 0 80 80"
+	fill="none"
+	xmlns="http://www.w3.org/2000/svg"
+>
+	<g transform="translate(0,5)">
+		<path
+			d="M40 5 L70 65 L55 65 L48 50 H32 L25 65 H10 L40 5 Z"
+			fill="#FFC300"
+		/>
+
+		<path
+			d="M40 22 L47 38 H33 L40 22 Z"
+			fill="#0E172A"
+		/>
+
+		<ellipse
+			cx="40"
+			cy="40"
+			rx="38"
+			ry="14"
+			transform="rotate(-20 40 40)"
+			stroke="#FFC300"
+			stroke-width="6"
+			fill="none"
+		/>
+	</g>
+</svg>

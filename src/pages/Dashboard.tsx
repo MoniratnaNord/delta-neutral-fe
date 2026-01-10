@@ -208,8 +208,8 @@ export function Dashboard() {
 							onClick={() => setActiveTab(tab)}
 							className={`pb-2 text-sm border-b-2 ${
 								activeTab === tab
-									? "text-green-400 border-green-400"
-									: "hover:text-green-400 border-transparent hover:border-green-400"
+									? "text-[#ffc300] border-[#ffc300]"
+									: "hover:text-[#ffc300] border-transparent hover:border-[#ffc300]"
 							}`}
 						>
 							{tab}
@@ -229,8 +229,8 @@ export function Dashboard() {
 								onClick={() => setTransactionsSubTab(t.key)}
 								className={`px-3 py-1 text-xs rounded ${
 									transactionsSubTab === t.key
-										? "bg-green-900/30 text-green-400 border border-green-800/50"
-										: "bg-[#15161b] text-gray-300 hover:text-green-300"
+										? "bg-green-900/30 text-[#ffc300] border border-green-800/50"
+										: "bg-[#15161b] text-gray-300 hover:text-[#ffc300]"
 								}`}
 							>
 								{t.label}
@@ -268,10 +268,10 @@ export function Dashboard() {
 				<div className="flex justify-center items-center py-12 space-x-4">
 					<button
 						disabled={page === 1}
-						className={`bg-green-400 text-white px-4 py-2 rounded flex items-center justify-center hover:bg-green-600 ${
+						className={`bg-[#ffc300] text-white px-4 py-2 rounded flex items-center justify-center hover:bg-yellow-400 ${
 							page === 1
-								? "bg-gray-200 hover:bg-gray-200 cursor-not-allowed"
-								: "bg-green-600"
+								? "bg-gray-400 hover:bg-gray-200 cursor-not-allowed"
+								: "bg-[#ffc300] hover:bg-yellow-400"
 						}`}
 						onClick={() => setPage(page - 1)}
 					>
@@ -334,10 +334,10 @@ export function Dashboard() {
 						return (
 							<button
 								disabled={page === totalPages}
-								className={`bg-green-400 text-white px-4 py-2 rounded flex items-center justify-center hover:bg-green-600 ${
+								className={`bg-[#ffc300] text-white px-4 py-2 rounded flex items-center justify-center hover:bg-yellow-400 ${
 									page === totalPages
-										? "bg-gray-200 hover:bg-gray-200 cursor-not-allowed"
-										: "bg-green-600"
+										? "bg-gray-400 hover:bg-gray-200 cursor-not-allowed"
+										: "bg-[#ffc300] hover:bg-yellow-400"
 								}`}
 								onClick={() => setPage(page + 1)}
 							>

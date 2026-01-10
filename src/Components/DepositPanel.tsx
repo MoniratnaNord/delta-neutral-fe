@@ -16,7 +16,7 @@ export function DepositPanel() {
 				<div>
 					<h3
 						className={`${
-							activeTab === "Deposit" ? "text-white" : "text-gray-500"
+							activeTab === "Deposit" ? "text-[#ffc300]" : "text-gray-500"
 						} h-heading text-2xl cursor-pointer`}
 						onClick={() => setActiveTab("Deposit")}
 					>
@@ -26,7 +26,7 @@ export function DepositPanel() {
 				<div className="text-sm text-gray-300">
 					<h3
 						className={`${
-							activeTab === "Withdraw" ? "text-white" : "text-gray-500"
+							activeTab === "Withdraw" ? "text-[#ffc300]" : "text-gray-500"
 						} h-heading text-2xl cursor-pointer`}
 						onClick={() => setActiveTab("Withdraw")}
 					>

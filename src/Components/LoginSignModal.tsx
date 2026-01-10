@@ -125,7 +125,7 @@ const LoginSignModal: React.FC<LoginSignModalProps> = ({
 					onClick={handleAgreeTerms}
 					className={`w-full py-3 rounded-xl font-semibold transition ${
 						agreed
-							? "btn-accent text-black hover:bg-lime-300"
+							? "bg-[#ffc300] text-black hover:bg-lime-300"
 							: "bg-gray-600 text-gray-400 cursor-not-allowed"
 					}`}
 				>
