@@ -130,7 +130,7 @@ export function DepositInput() {
 						className={
 							isConnected && balance < 5
 								? "bg-gray-400 rounded-md py-3 cursor-not-allowed"
-								: "btn-accent rounded-md py-3"
+								: "bg-[#ffc300] rounded-md py-3 text-black"
 						}
 					>
 						{isLoading ? "Depositing..." : "Deposit " + asset}

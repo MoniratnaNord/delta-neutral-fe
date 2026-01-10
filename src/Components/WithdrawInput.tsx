@@ -193,7 +193,7 @@ export function WithdrawInput() {
 							!withdrawCheck?.data.enable_withdraw ||
 							isPnlLoading
 								? "bg-gray-400 cursor-not-allowed"
-								: "btn-accent"
+								: "bg-[#ffc300] text-black"
 						}`}
 					>
 						{isLoading ? "Withdrawing..." : "Place Withdraw"}

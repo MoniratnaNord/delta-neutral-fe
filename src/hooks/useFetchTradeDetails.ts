@@ -4,23 +4,36 @@ import { useQuery } from "@tanstack/react-query";
 import useCheckUserSign from "./useCheckUserSign";
 import { useSelector } from "react-redux";
 import { fetchWithAuth } from "../utils/appkit";
+import { getStartTime } from "../config/getStartTime";
 
 const useFetchTradeDetails = (userId: string) => {
 	const hasSignedAndLoggedIn = useCheckUserSign();
 	const jwtToken = useSelector((state: any) => state.user.jwtToken); // Move useSelector here
+	const startTime = getStartTime(userId);
 	return useQuery({
 		queryKey: ["fetch-trade-details", userId, jwtToken],
-		queryFn: () => getTradeDetails(userId, jwtToken), // Pass jwtToken to getAccountInfo
+		queryFn: () =>
+			getTradeDetails(
+				userId,
+				jwtToken,
+				startTime !== null ? startTime : undefined
+			), // Pass jwtToken to getAccountInfo
 		// staleTime: Infinity,
 		refetchOnWindowFocus: false,
 		enabled: hasSignedAndLoggedIn && !!userId && !!jwtToken,
 	});
 };
 
-const getTradeDetails = async (userId: string, jwtToken: string) => {
+const getTradeDetails = async (
+	userId: string,
+	jwtToken: string,
+	startTime?: string
+) => {
 	try {
 		const response = await fetchWithAuth(
-			`${import.meta.env.VITE_BACKEND_URL}/user/${userId}/fetch-trade-details`,
+			`${
+				import.meta.env.VITE_BACKEND_URL
+			}/user/${userId}/fetch-trade-details?start_time=${startTime || ""}`,
 			{
 				method: "GET",
 				headers: {
